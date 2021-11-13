@@ -61,7 +61,9 @@ class gambarController extends Controller
         $file_name = $foto;
         $upOracle = $this->oracle()->upFileOracle($file_name);
         DB::table('gambar')->insert(
-            'foto'->$upOracle['message'],
+            [
+            'foto'=>$upOracle['message'],
+            ]
         );
         return redirect()->route('gambar.index');
     }

@@ -56,7 +56,7 @@ function upload_file_oracle($bucket_name, $folder_name = '', $file_name)
     $s3 = $this->get_oracle_client($endpoint);
     $s3->getEndpoint();
     
-    $file_url = "https://objectstorage.ap-tokyo-1.oraclecloud.com/p/8QT6BXz--fT5S7PE-x6P3o1k1z6p6KdmyboJvnWCJsJpxlrkFGZ6eYmaQ7s-klUe/n/nr4elbur2m4y/b/AbdulBucket/o/{$keyname}";
+    $file_url = "https://objectstorage.uk-london-1.oraclecloud.com/p/-LxDUcftCN7iPZCPI-PoroIgG9WykHFKS0IlYyj9RZRfQ6cejgtgYv9jxFLWjPhP/n/lrleownotzb3/b/UtsMeliska/o/{$keyname}";
     try {
         $s3->putObject(array(
             'Bucket' => $bucket_name,
@@ -75,7 +75,7 @@ function upload_file_oracle($bucket_name, $folder_name = '', $file_name)
 
 	public function upFileOracle($file_name)
 	{
-		$bucket_name='MeliskaBucket';
+		$bucket_name='UtsMeliska';
 		$folder_name='tempat-gambar';
 		$upload = $this->upload_file_oracle($bucket_name, $folder_name, $file_name);
 		return $upload;
