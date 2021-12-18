@@ -1,1 +1,1 @@
-* * * * * /usr/local/bin/php /var/www/laravel/artisan schedule:run
+* * * * * /usr/local/bin/php /var/www/quiz2_cloudcomputing/artisan schedule:run
