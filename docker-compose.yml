@@ -1,0 +1,8 @@
+version: "3"
+services:
+  web:
+    image: myaffna/quiz2_cloudcomputing:latest
+    container_name: web
+    restart: unless-stopped
+    ports:
+      - 80:80
