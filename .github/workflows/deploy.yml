@@ -36,8 +36,8 @@ jobs:
 
       - name: 'Build and push'
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/laravel .
-          docker push ${{ secrets.DOCKERHUB_USERNAME}}/laravel
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/quiz2_cloudcomputing .
+          docker push ${{ secrets.DOCKERHUB_USERNAME}}/quiz2_cloudcomputing
       - name: 'Write config'
         run: |
           mkdir ~/.oci
