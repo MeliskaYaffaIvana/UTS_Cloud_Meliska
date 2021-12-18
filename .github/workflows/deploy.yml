@@ -1,4 +1,4 @@
-name: Quiz2Meliska-laravel-cicd
+name: Quiz2-laravel-cicd
 
 on:
   push:
