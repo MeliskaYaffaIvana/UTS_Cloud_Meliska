@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+
+set -e
+cd /var/www/laravel
+
+role=${CONTAINER_ROLE:-app}
+if [[ -z "$APP_ENV" ]]; then
+    export APP_ENV=local
+    echo -e "\e[33mENV undefined: APP_ENV,\e[0m use default $APP_ENV"
+fi
+
+if [[ -z "$DB_CONNECTION" ]]; then
+    export DB_CONNECTION=mysql
+    echo -e "\e[33mENV undefined: DB_CONNECTION,\e[0m use default $DB_CONNECTION"
+fi
+
+if [[ -z "$APP_NAME" ]]; then
+    export APP_NAME=laravel
+    echo -e "\e[33mENV undefined: APP_NAME,\e[0m use default $APP_NAME"
+fi
+
+if [[ -z "$APP_DEBUG" ]]; then
+    export APP_DEBUG=true
+    echo -e "\e[33mENV undefined: APP_DEBUG,\e[0m use default $APP_DEBUG"
+fi
+
+if [[ -z "$DB_HOST" ]]; then
+    export DB_HOST=10.0.0.111
+    echo -e "\e[33mENV undefined: DB_HOST,\e[0m use default $DB_HOST"
+fi 
+
+if [[ -z "$DB_PORT" ]]; then
+    export DB_PORT=3306
+    echo -e "\e[33mENV undefined: DB_PORT,\e[0m use default $DB_PORT"
+fi 
+
+if [[ -z "$DB_DATABASE" ]]; then
+    export DB_DATABASE=quiz2_abdul
+    echo -e "\e[33mENV undefined: DB_DATABASE,\e[0m use default $DB_DATABASE"
+fi
+
+	if [[ -z "$DB_USERNAME" ]]; then
+    export DB_USERNAME=admin
+    echo -e "\e[33mENV undefined: DB_USERNAME,\e[0m use default $DB_USERNAME"
+fi 
+
+if [[ -z "$DB_PASSWORD" ]]; then
+    export DB_PASSWORD=Admin@123
+    echo -e "\e[33mENV undefined: DB_PASSWORD,\e[0m use default $DB_PASSWORD"
+fi 
+
+if [[ -z "$ORACLE_ACCESS_KEY" ]]; then
+    export ORACLE_ACCESS_KEY=46d254ad30c6698232df065ee356a6ef3ce2c90a
+    echo -e "\e[33mENV undefined: ORACLE_ACCESS_KEY,\e[0m use default $ORACLE_ACCESS_KEY"
+fi 
+
+if [[ -z "$ORACLE_SECRET_KEY" ]]; then
+    export ORACLE_SECRET_KEY=vEVtraBV1o67GU0FxFVp/+3mOW7Z5e7ixtSfiE5uCQE=
+    echo -e "\e[33mENV undefined: ORACLE_SECRET_KEY,\e[0m use default $ORACLE_SECRET_KEY"
+fi 
+
+if [[ -z "$ORACLE_REGION" ]]; then
+    export ORACLE_REGION=ap-tokyo-1
+    echo -e "\e[33mENV undefined: ORACLE_REGION,\e[0m use default $ORACLE_REGION"
+fi
+
+if [[ -z "$ORACLE_NAMESPACE" ]]; then
+    export ORACLE_NAMESPACE=nr4elbur2m4y
+    echo -e "\e[33mENV undefined: ORACLE_NAMESPACE,\e[0m use default $ORACLE_NAMESPACE"
+fi
+
+if [[ -z "$APP_KEY" ]]; then
+    msg="ENV undefined: APP_KEY"
+    if [[ "$APP_ENV" = "local" ]]; then
+        APP_KEY=$(php artisan key:generate --show)
+        export APP_KEY
+        echo -e "\e[33m${msg},\e[0m generated $APP_KEY"
+    else
+        echo -e "\e[31m${msg}\e[0m"
+        exit 1
+    fi
+fi
+
+if [[ "$APP_ENV" = "local" ]]; then
+    cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini
+else
+    echo "Caching configuration..."
+    php artisan config:cache
+    php artisan route:cache
+fi
+
+chown www-data:www-data bootstrap/cache
+chown -R www-data:www-data storage/
+chown -R www-data.www-data /var/www/laravel
+chmod -R 755 /var/www/laravel
+chmod -R 777 /var/www/laravel/storage
+
+if [[ "$DB_CONNECTION" = "sqlite" ]]; then
+    touch database/database.sqlite
+    chown -R www-data:www-data database/
+fi
+
+php artisan migrate:fresh --force
+
+if [[ "$role" = "app" ]]; then
+
+    exec apache2-foreground
+
+elif [[ "$role" = "scheduler" ]]; then
+
+    echo -e "\e[33mSUGGESTION: use K8s Job instead of docker cron\e[0m"
+    echo -e "\e[33m  https://kubernetes.io/docs/concepts/workloads/controllers/job/\e[0m"
+    echo "Running the cron..."
+    crontab /var/spool/cron/crontabs/root
+    cron -f
+
+elif [[ "$role" = "queue" ]]; then
+
+    echo "Running the queue..."
+    php artisan queue:work --queue="{default}" --verbose --tries=3 --timeout=90
+
+else
+    echo "Could not match the container role: $role"
+    exit 1
+fi
