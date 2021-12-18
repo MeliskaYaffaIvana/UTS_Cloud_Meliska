@@ -1,4 +1,4 @@
-name: Quiz2-laravel-cicd
+name: Quiz2Meliska-laravel-cicd
 
 on:
   push:
@@ -88,7 +88,7 @@ jobs:
             --query "data.id" \
             --raw-output \
             )" >> $GITHUB_ENV
-      - name: 'Get Instance IP'
+      - name: 'Get Instance IP' 
         run: |
           echo "INSTANCE_IP=$( \
             oci compute instance list-vnics \
