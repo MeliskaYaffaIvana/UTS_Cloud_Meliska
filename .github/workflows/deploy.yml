@@ -1,4 +1,4 @@
-name: Quiz2-cicd
+name: Quiz2Meliska-cicd
 
 on:
   push:
