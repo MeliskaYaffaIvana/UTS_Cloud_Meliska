@@ -28,7 +28,7 @@ RUN composer install --no-autoloader --no-scripts --no-dev
 
 COPY docker/ /
 RUN a2enmod rewrite headers \
-    && a2ensite quiz2_cloudcomputing \
+    && a2ensite laravel \
     && a2dissite 000-default \
     && chmod +x /usr/local/bin/docker-laravel-entrypoint
 
