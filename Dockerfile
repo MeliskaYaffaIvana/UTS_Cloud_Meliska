@@ -30,9 +30,9 @@ COPY docker/ /
 RUN a2enmod rewrite headers \
     && a2ensite quiz2_cloudcomputing \
     && a2dissite 000-default \
-    && chmod +x /usr/local/bin/docker-quiz2-entrypoint
+    && chmod +x /usr/local/bin/docker-laravel-entrypoint
 
 COPY . /var/www/quiz2_cloudcomputing
 RUN composer install --optimize-autoloader --no-dev
 
-CMD ["docker-quiz2-entrypoint"]
+CMD ["docker-laravel-entrypoint"]
